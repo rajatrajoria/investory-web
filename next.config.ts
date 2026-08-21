@@ -50,6 +50,22 @@ const nextConfig: NextConfig = {
     cpus: 1,
     workerThreads: false,
   },
+  webpack(config) {
+    // The host's glibc is too old for Next's native SWC minifier, so
+    // production builds fall back to a minifier that spawns one worker
+    // process per CPU core it detects (~28 on this host's 29-core
+    // machine, wrapped as an opaque function Next doesn't expose for
+    // configuring down). That burst of processes, on top of what the
+    // running app + hosting stack already uses, blows straight past
+    // this account's LVE process ceiling and aborts the build every
+    // time. Skipping minification removes the worker burst entirely —
+    // a larger, unminified bundle is a fine trade for a build that
+    // actually completes on this host.
+    if (config.optimization) {
+      config.optimization.minimize = false;
+    }
+    return config;
+  },
   async headers() {
     return [
       {
