@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Container, Eyebrow } from "@/components/ui";
 import { ContactForm } from "@/components/ContactForm";
+import { AdvisorPhoto } from "@/components/AdvisorPhoto";
 import { getSiteSettings } from "@/lib/content";
 import { MailIcon, PhoneIcon, MapPinIcon, ClockIcon } from "@/components/Icons";
 
@@ -35,7 +36,17 @@ export default async function ContactPage() {
               No obligation, no pressure — just a straightforward conversation about where you stand and where you want to be.
             </p>
 
-            <dl className="mt-10 flex flex-col gap-5">
+            <div className="mt-8 flex items-center gap-3.5 rounded-2xl border border-rule bg-surface p-4">
+              <AdvisorPhoto photoUrl={settings.advisor_photo_url} name={settings.advisor_name} size={48} />
+              <div>
+                <div className="font-display text-[15px] font-semibold text-ink">
+                  {settings.advisor_name}
+                </div>
+                <div className="text-[13px] text-ink-faint">You&apos;ll be talking directly to them — not a call centre.</div>
+              </div>
+            </div>
+
+            <dl className="mt-8 flex flex-col gap-5">
               {details.map((d) => (
                 <div key={d.label} className="flex items-start gap-3.5">
                   <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-soft text-brand">
