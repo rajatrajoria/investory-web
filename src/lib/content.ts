@@ -5,6 +5,7 @@ export type Service = {
   title: string;
   description: string;
   icon: string;
+  image_url: string | null;
   display_order: number;
   published: number;
 };
@@ -102,20 +103,23 @@ export async function getService(id: number): Promise<Service | null> {
   return queryOne<Service>(`SELECT * FROM services WHERE id = ?`, [id]);
 }
 
-type ServiceInput = Omit<Service, "id" | "published"> & { published: boolean | number };
+type ServiceInput = Omit<Service, "id" | "published" | "image_url"> & {
+  published: boolean | number;
+  image_url?: string | null;
+};
 
 export async function createService(data: ServiceInput): Promise<number> {
   const result = await execute(
-    `INSERT INTO services (title, description, icon, display_order, published) VALUES (?, ?, ?, ?, ?)`,
-    [data.title, data.description, data.icon, data.display_order, data.published ? 1 : 0]
+    `INSERT INTO services (title, description, icon, image_url, display_order, published) VALUES (?, ?, ?, ?, ?, ?)`,
+    [data.title, data.description, data.icon, data.image_url || null, data.display_order, data.published ? 1 : 0]
   );
   return result.insertId;
 }
 
 export async function updateService(id: number, data: ServiceInput): Promise<void> {
   await execute(
-    `UPDATE services SET title = ?, description = ?, icon = ?, display_order = ?, published = ? WHERE id = ?`,
-    [data.title, data.description, data.icon, data.display_order, data.published ? 1 : 0, id]
+    `UPDATE services SET title = ?, description = ?, icon = ?, image_url = ?, display_order = ?, published = ? WHERE id = ?`,
+    [data.title, data.description, data.icon, data.image_url || null, data.display_order, data.published ? 1 : 0, id]
   );
 }
 

@@ -1,14 +1,6 @@
 import { QuoteIcon } from "./Icons";
+import { AdvisorPhoto } from "./AdvisorPhoto";
 import type { Testimonial } from "@/lib/content";
-
-function initials(name: string): string {
-  return name
-    .split(" ")
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
 
 export function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
@@ -18,9 +10,7 @@ export function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         {testimonial.quote}
       </blockquote>
       <figcaption className="mt-6 flex items-center gap-3 border-t border-rule pt-5">
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-soft font-mono text-[13px] font-semibold text-brand">
-          {initials(testimonial.name)}
-        </div>
+        <AdvisorPhoto photoUrl={testimonial.photo_url} name={testimonial.name} size={40} />
         <div>
           <div className="text-[14.5px] font-semibold text-ink">{testimonial.name}</div>
           {testimonial.role_company && (

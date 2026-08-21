@@ -45,6 +45,7 @@ export async function saveServiceAction(
     title: formData.get("title"),
     description: formData.get("description"),
     icon: formData.get("icon"),
+    image_url: formData.get("image_url"),
     display_order: formData.get("display_order"),
     published: formData.get("published") === "on",
   });

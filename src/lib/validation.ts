@@ -25,6 +25,7 @@ export const serviceSchema = z.object({
   title: z.string().trim().min(2).max(160),
   description: z.string().trim().min(2).max(2000),
   icon: z.string().trim().min(1).max(40),
+  image_url: z.string().trim().max(500).optional().or(z.literal("")),
   display_order: z.coerce.number().int().min(0).max(9999),
   published: z.coerce.boolean(),
 });

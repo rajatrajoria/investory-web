@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { saveBlogPostAction } from "@/lib/actions/content";
 import type { BlogPost } from "@/lib/content";
 import { ImageUpload } from "./ImageUpload";
+import { MarkdownImageInserter } from "./MarkdownImageInserter";
 import { AdminField, AdminInput, AdminTextarea, AdminSelect, AdminSubmit, AdminError } from "./fields";
 
 export function BlogPostForm({ post }: { post?: BlogPost }) {
@@ -27,6 +28,9 @@ export function BlogPostForm({ post }: { post?: BlogPost }) {
       <ImageUpload name="cover_image" defaultValue={post?.cover_image} label="Cover image (optional)" />
 
       <AdminField label="Content" htmlFor="content" hint="Markdown supported: **bold**, *italic*, ## headings, [links](url), lists, images.">
+        <div className="mb-2.5">
+          <MarkdownImageInserter targetId="content" />
+        </div>
         <AdminTextarea id="content" name="content" required rows={16} defaultValue={post?.content} className="font-mono text-[13.5px]" />
       </AdminField>
 

@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { saveServiceAction } from "@/lib/actions/content";
 import type { Service } from "@/lib/content";
 import { SERVICE_ICONS } from "@/components/Icons";
+import { ImageUpload } from "./ImageUpload";
 import { AdminField, AdminInput, AdminTextarea, AdminSelect, AdminCheckbox, AdminSubmit, AdminError } from "./fields";
 
 export function ServiceForm({ service }: { service?: Service }) {
@@ -36,6 +37,12 @@ export function ServiceForm({ service }: { service?: Service }) {
           ))}
         </AdminSelect>
       </AdminField>
+
+      <ImageUpload
+        name="image_url"
+        defaultValue={service?.image_url}
+        label="Image (optional — shown above the icon on the card)"
+      />
 
       <AdminField label="Display order" htmlFor="display_order">
         <AdminInput
