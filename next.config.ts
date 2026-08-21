@@ -40,6 +40,16 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "www.investory.co.in" },
     ],
   },
+  // Shared hosting (CloudLinux LVE) caps this account's concurrent
+  // process/thread count. Next.js's default build-time worker pool
+  // (one per CPU core it detects on the host machine, not the LVE
+  // limit) spawns far more child processes than the account is allowed,
+  // crashing the build with spawn EAGAIN / kill EPERM. Capping to a
+  // single worker keeps the build inside the account's process limit.
+  experimental: {
+    cpus: 1,
+    workerThreads: false,
+  },
   async headers() {
     return [
       {
