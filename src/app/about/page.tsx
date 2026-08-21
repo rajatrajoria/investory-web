@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Container, Eyebrow, PrimaryButton, JsonLd } from "@/components/ui";
+import { AdvisorPhoto } from "@/components/AdvisorPhoto";
+import { Reveal } from "@/components/Reveal";
 import { getSiteSettings } from "@/lib/content";
 import { CheckIcon } from "@/components/Icons";
 
@@ -45,38 +47,55 @@ export default async function AboutPage() {
       />
       <section className="border-b border-rule">
         <Container className="py-16 sm:py-24">
-          <Eyebrow>About Investory</Eyebrow>
-          <h1 className="mt-4 max-w-2xl text-balance font-display text-[clamp(2rem,4.4vw,3rem)] font-semibold leading-[1.1] text-ink">
-            Simplifying finance for people who deserve better than a sales pitch.
-          </h1>
-          <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-ink-muted">
-            {settings.about_text}
-          </p>
+          <Reveal>
+            <Eyebrow>About Investory</Eyebrow>
+            <h1 className="mt-4 max-w-2xl text-balance font-display text-[clamp(2rem,4.4vw,3rem)] font-semibold leading-[1.1] text-ink">
+              Simplifying finance for people who deserve better than a sales pitch.
+            </h1>
+            <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-ink-muted">
+              {settings.about_text}
+            </p>
+          </Reveal>
         </Container>
       </section>
 
       <section className="py-16 sm:py-24">
         <Container>
           <div className="grid gap-6 sm:grid-cols-3">
-            {VALUES.map((v) => (
-              <div key={v.title} className="rounded-2xl border border-rule bg-surface p-7">
-                <CheckIcon className="h-6 w-6 text-brand" />
-                <h2 className="mt-4 font-display text-[18px] font-semibold text-ink">
-                  {v.title}
-                </h2>
-                <p className="mt-2 text-[14.5px] leading-relaxed text-ink-muted">{v.body}</p>
-              </div>
+            {VALUES.map((v, i) => (
+              <Reveal key={v.title} delay={i * 90}>
+                <div className="flex h-full flex-col rounded-2xl border border-rule bg-surface p-7 shadow-sm transition-shadow hover:shadow-md">
+                  <CheckIcon className="h-6 w-6 text-brand" />
+                  <h2 className="mt-4 font-display text-[18px] font-semibold text-ink">
+                    {v.title}
+                  </h2>
+                  <p className="mt-2 text-[14.5px] leading-relaxed text-ink-muted">{v.body}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </Container>
       </section>
 
       <section className="border-t border-rule bg-surface py-16 sm:py-20">
-        <Container className="flex flex-col items-center gap-6 text-center">
-          <h2 className="max-w-xl text-balance font-display text-[clamp(1.5rem,3vw,2rem)] font-semibold text-ink">
-            {settings.advisor_name} has been managing client portfolios personally since {settings.founded_year}.
-          </h2>
-          <PrimaryButton href="/contact">Start a conversation</PrimaryButton>
+        <Container>
+          <Reveal className="mx-auto flex max-w-2xl flex-col items-center gap-6 rounded-3xl border border-rule bg-paper p-8 text-center shadow-sm sm:p-12">
+            <AdvisorPhoto
+              photoUrl={settings.advisor_photo_url}
+              name={settings.advisor_name}
+              size={104}
+              className="shadow-lg"
+            />
+            <div>
+              <h2 className="text-balance font-display text-[clamp(1.4rem,2.8vw,1.9rem)] font-semibold leading-[1.25] text-ink">
+                {settings.advisor_name} has been managing client portfolios personally since {settings.founded_year}.
+              </h2>
+              <p className="mt-3 text-[14.5px] text-ink-muted">
+                Founder &amp; Wealth Advisor, Investory — the person on the other end of every call.
+              </p>
+            </div>
+            <PrimaryButton href="/contact">Start a conversation</PrimaryButton>
+          </Reveal>
         </Container>
       </section>
     </>

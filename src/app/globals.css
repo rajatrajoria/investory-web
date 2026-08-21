@@ -149,6 +149,19 @@ summary:focus-visible {
   border-radius: 2px;
 }
 
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-2%, 3%) scale(1.04); }
+}
+.animate-drift {
+  animation: drift 14s ease-in-out infinite;
+}
+
+.dot-grid {
+  background-image: radial-gradient(var(--rule-strong) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

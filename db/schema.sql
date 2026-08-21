@@ -20,6 +20,24 @@ CREATE TABLE IF NOT EXISTS site_settings (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Admin-uploaded images, stored as rows rather than disk files. At this
+-- app's scale (a handful of site images: hero, advisor photo, testimonial
+-- photos, blog covers) the database is a simpler and more reliable home
+-- for them on shared hosting than a filesystem path — one less thing to
+-- get shadowed, wiped, or made unwritable by a hosting environment this
+-- app doesn't control. Served via /media/[id] with a long, immutable
+-- cache lifetime: replacing an image always inserts a new row and a new
+-- id, so a cached id never goes stale.
+CREATE TABLE IF NOT EXISTS media (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  mime_type VARCHAR(60) NOT NULL,
+  data LONGBLOB NOT NULL,
+  width INT UNSIGNED NULL,
+  height INT UNSIGNED NULL,
+  size_bytes INT UNSIGNED NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS services (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(160) NOT NULL,

@@ -45,7 +45,7 @@ export function getPool(): mysql.Pool {
   return globalForDb.__investoryDbPool;
 }
 
-type QueryParam = string | number | boolean | null | Date;
+type QueryParam = string | number | boolean | null | Date | Buffer;
 
 export async function query<T = unknown>(
   sql: string,

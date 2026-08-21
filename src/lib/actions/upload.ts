@@ -1,33 +1,34 @@
 "use server";
 
-import { randomBytes } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import sharp from "sharp";
-import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import { execute } from "@/lib/db";
 
 const MAX_BYTES = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 
 export type UploadState = { error?: string; url?: string } | undefined;
 
 /**
  * Accepts an uploaded image, validates it strictly, and re-encodes it
- * through sharp before writing to disk — this strips EXIF/embedded
- * payloads and normalizes the format regardless of what container the
- * original file claimed to be. Because this app has no PHP runtime in its
- * request path at all, "upload a script disguised as an image" (the exact
- * class of attack that compromised the old WordPress site) has no
- * execution path here even without this step — this is defense in depth.
+ * through sharp before storing it — this strips EXIF/embedded payloads
+ * and normalizes the format regardless of what container the original
+ * file claimed to be. Images are stored as rows in the `media` table
+ * rather than as files on disk: this app's shared-hosting account gives
+ * no strong guarantee about a writable, persistent path across deploys,
+ * and at the handful-of-images scale this site needs, the database is
+ * simpler to reason about and back up than a filesystem. Because this
+ * app has no PHP runtime in its request path at all, "upload a script
+ * disguised as an image" (the exact class of attack that compromised
+ * the old WordPress site) has no execution path here even without this
+ * step — this is defense in depth.
  */
 export async function uploadImageAction(
   _prevState: UploadState,
   formData: FormData
 ): Promise<UploadState> {
   const session = await getSession();
-  if (!session) redirect("/studio/login");
+  if (!session) return { error: "Your session has expired. Log in again and retry." };
 
   const file = formData.get("file");
   if (!(file instanceof File)) return { error: "Choose an image to upload." };
@@ -40,19 +41,25 @@ export async function uploadImageAction(
   const buffer = Buffer.from(await file.arrayBuffer());
 
   let output: Buffer;
+  let width: number | null = null;
+  let height: number | null = null;
   try {
     output = await sharp(buffer)
       .rotate()
       .resize({ width: 1600, withoutEnlargement: true })
       .webp({ quality: 82 })
       .toBuffer();
+    const meta = await sharp(output).metadata();
+    width = meta.width ?? null;
+    height = meta.height ?? null;
   } catch {
     return { error: "That file doesn't look like a valid image." };
   }
 
-  await mkdir(UPLOAD_DIR, { recursive: true });
-  const filename = `${Date.now()}-${randomBytes(8).toString("hex")}.webp`;
-  await writeFile(path.join(UPLOAD_DIR, filename), output);
+  const result = await execute(
+    `INSERT INTO media (mime_type, data, width, height, size_bytes) VALUES (?, ?, ?, ?, ?)`,
+    ["image/webp", output, width, height, output.length]
+  );
 
-  return { url: `/uploads/${filename}` };
+  return { url: `/media/${result.insertId}` };
 }

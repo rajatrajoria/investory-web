@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { saveSiteSettingsAction } from "@/lib/actions/content";
+import { ImageUpload } from "./ImageUpload";
 import { AdminField, AdminInput, AdminTextarea, AdminSubmit, AdminError, AdminSuccess } from "./fields";
 
 const FIELDS: Array<{
@@ -29,6 +30,19 @@ export function SettingsForm({ settings }: { settings: Record<string, string> })
 
   return (
     <form action={formAction} className="flex max-w-2xl flex-col gap-5">
+      <div className="grid gap-5 rounded-2xl border border-rule bg-surface p-5 sm:grid-cols-2">
+        <ImageUpload
+          name="hero_image_url"
+          defaultValue={settings.hero_image_url}
+          label="Homepage hero image"
+        />
+        <ImageUpload
+          name="advisor_photo_url"
+          defaultValue={settings.advisor_photo_url}
+          label="Advisor photo"
+        />
+      </div>
+
       {FIELDS.map((field) => (
         <AdminField key={field.key} label={field.label} htmlFor={field.key} hint={field.hint}>
           {field.type === "textarea" ? (

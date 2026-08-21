@@ -63,6 +63,8 @@ const SETTINGS_DEFAULTS: Record<string, string> = {
   contact_hours: "10:00 AM – 4:00 PM",
   contact_location: "Odisha, India",
   advisor_name: "Raman Khandelwal",
+  hero_image_url: "",
+  advisor_photo_url: "",
 };
 
 export async function getSiteSettings(): Promise<Record<string, string>> {
